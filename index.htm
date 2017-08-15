@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <title>3DBPP</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+</head>
+<body>
+       
+<script>
+var boxIndex = -1;
+var Boxes = null;
+var itemStopIndex = 0;
+var DEMO = false;
+var validadeJSON = true;   
+</script>
+
+<div id="box-list"><div id="drop-zone"><p id="drop-zone-file" class="drop-zone-ok"></p></div></div>
+<div id="box-items"></div>
+<div id="webgl-container"></div> 
+<div id="opacity-provider"><div id="popup"></div></div>    
+
+<div id="menu"><img id="show" src="images/m.png" width="27" height="22" title="Help"></div>
+    
+<div id="toolBox"><ul>    
+    <li><div class="screenshot"><img id="sshot" src="images/ss.png" width="27" height="22" title="Screenshot (p)"></div></li>
+    <li><br></li>
+    <li>
+        <div class="tbInput"><input type="checkbox" id="cameraLock" onchange="controlsToogle()" accesskey="c" checked></div>
+        <div class="tbInput"><img src="images/c.png" width="16" height="16" title="Camera lock (Alt+c)"></div>
+    </li>
+	<li>
+        <div class="tbInput"><input type="radio" accesskey="1" name="cam" id="cam1" onchange="toggleCam()" checked></div>
+        <div class="tbInput"><img src="images/cam1.png" width="16" height="16" title="Camera 1 (Alt+1)"></div>
+    </li>
+    <li>
+        <div class="tbInput"><input type="radio" accesskey="2" name="cam" id="cam2" onchange="toggleCam()"></div>
+        <div class="tbInput"><img src="images/cam2.png" width="16" height="16" title="Camera 2 (Alt+2)"></div>
+    </li>    
+    <li>
+        <div class="tbInput"><input type="radio" accesskey="3" name="cam" id="cam3" onchange="toggleCam()"></div>
+        <div class="tbInput"><img src="images/cam3.png" width="16" height="16" title="Camera 3 (Alt+3)"></div>
+    </li>    
+    <li><br></li>    
+    <li>
+        <div class="tbInput"><input type="checkbox" id="visibleAxis" onchange="AxisToogle()" accesskey="a" checked></div>
+        <div class="tbInput"><img src="images/a.png" width="16" height="16" title="Visible axes (Alt+a)"></div>
+    </li>    
+    <li>
+        <div class="tbInput"> <input type="checkbox" id="visiblePlane" onchange="planeToogle()" accesskey="p"></div>
+        <div class="tbInput"><img src="images/p.png" width="16" height="16" title="Visible plane (Alt+p)"></div>
+    </li>    
+    <li><br></li>    
+    <li>
+        <div class="tbInput"><input type="radio" accesskey="w" name="type" checked id="typeWireFrame" onchange="toggleView()"></div>
+        <div class="tbInput"><img src="images/w.gif" width="16" height="16"title="Wireframe (Alt+w)"></div>
+    </li>
+    <li>
+        <div class="tbInput"><input type="radio" accesskey="t" name="type" id="typeSubtract" onchange="toggleView()"></div>
+        <div class="tbInput"><img src="images/t.png" width="16" height="16" title="Subtract (Alt+t)"></div>
+    </li>    
+    <li>
+        <div class="tbInput"> <input type="radio" accesskey="s" name="type" id="typeSolid" onchange="toggleView()"></div>
+        <div class="tbInput"><img src="images/s.png" width="16" height="16" title="Solid (Alt+s)"></div>
+    </li>    
+    <li>
+		<div class="tbInput"><input type="checkbox" id="RamdomColor" onchange="toggleView()" accesskey="R" ></div>
+        <div class="tbInput"><img src="images/r.png" width="16" height="16" title="Random Color (Alt+r)"></div>
+    </li>    
+</ul></div>
+
+<script src="libs/three.min.js"></script>
+<script src="libs/ThreeCSG.js"></script>
+<script src="libs/TrackballControls.js"></script>  
+<script src="libs/OrbitControls.js"></script>    
+<script src="libs/THREEx.screenshot.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/dojo/1.10.0/dojo/dojo.js" type="text/javascript"></script>
+	
+<script src="scripts/tools.js"></script>
+<script src="scripts/material.js"></script>
+<script src="scripts/webglScene.js"></script>
+<script src="scripts/webglHelper.js"></script>
+<script src="scripts/webglBox.js"></script>       
+<script src="scripts/menuBuilder.js"></script>    
+<script src="scripts/data.js"></script> 
+<script src="scripts/demo.js"></script>
+<script src="scripts/urlData.js"></script>
+  
+<script>
+var z = function () {    
+	var iDiv = document.createElement('div');        
+	iDiv.appendChild( doP("> Author", 'popupTitle') );
+	p = doP("Name: ", 'popupText');        
+	var element = document.createElement('a');
+	element.href = "https://www.linkedin.com/in/oscaroliveira";
+	element.textContent = "Óscar Oliveira";
+	element.target = "_blank";        
+	p.appendChild(element, '');
+	iDiv.appendChild( p );        
+	iDiv.appendChild( doP("Email: oscar.m.oliveira@gmail.com", 'popupText') );        
+	iDiv.appendChild( doP("> Demo", 'popupTitle') );		
+	p = doP("Click the link bellow and then click the drop file zone (top left corner).", 'popupText');
+	iDiv.appendChild( p );		
+	p = doP("Link: ", 'popupText');
+	p.appendChild(doA("index.htm?demo=true", ''));
+	iDiv.appendChild( p );        
+	var demotext =  'index.htm?data={"box":[{"w":25,"h":35,"d":15,"tl":37.5,"f":10,"items":[{"i":0,"w":10,"h":7,"d":3,"x":0,"y":0,"z":0,"r":1},{"i":1,"w":2,"h":7,"d":3,"x":0,"y":0,"z":3,"r":0}]}]}';
+	iDiv.appendChild( doP("> URL PARAMATER", 'popupTitle') );
+	p = doP("Click the link bellow and then click the drop file zone (top left corner).", 'popupText');
+	iDiv.appendChild( p );		
+	p = doP("Example: ", 'popupText');
+	p.appendChild(doA(demotext, ''));
+	iDiv.appendChild( p );                  
+	iDiv.appendChild( doP("> JSON Schema", 'popupTitle') );        
+	p = document.createElement('p');   
+	element = document.createElement('a');
+	element.href = "#";
+	element.className = "popupText";
+	element.textContent = "Download";
+	element.onclick = DownloadSchema; 
+	p.appendChild(element);        
+	iDiv.appendChild( p );        
+	iDiv.appendChild (doPre(schemaHTML, 'popupText'))         
+	document.getElementById("popup").appendChild(iDiv);
+};
+
+z();
+
+document.getElementById("show").onclick = (function() {
+	document.getElementById("opacity-provider").style.display = document.getElementById("opacity-provider").style.display == "block" ? "none" : "block";
+});
+</script>
+    
+</body>   
+</html>
