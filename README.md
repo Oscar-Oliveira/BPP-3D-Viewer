@@ -5,3 +5,5 @@
 Example: Top right menu > Demo link > 'DEMO AVAILABLE' (on drop zone, top left)
 
 [Screenshot](https://github.com/Oscar-Oliveira/BPP3D/blob/master/images/BPP3D.png)
+
+Live: [https://oscar-oliveira.github.io/BPP-3D-Viewer/](https://oscar-oliveira.github.io/BPP-3D-Viewer/)
